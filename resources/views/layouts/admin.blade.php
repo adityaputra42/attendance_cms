@@ -10,8 +10,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    
+    <!-- Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="antialiased bg-gray-50 text-gray-900 font-sans">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
