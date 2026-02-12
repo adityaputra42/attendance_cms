@@ -3,77 +3,145 @@
 @section('title', 'Edit User')
 
 @section('content')
-<div class="card">
-    <div class="flex justify-between items-center mb-4">
-        <h3>Edit User: {{ $user->name }}</h3>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-neutral"><i class="fa-solid fa-arrow-left"></i> Back</a>
+<div class="bg-base-100 p-6 rounded-xl shadow">
+
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold">
+            Edit User: {{ $user->name }}
+        </h2>
+        <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-neutral">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
     </div>
 
-    <form action="{{ route('admin.users.update', $user) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.users.update', $user) }}"
+          method="POST"
+          enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        
-        <div class="grid grid-cols-2 gap-4">
-            <div class="form-group mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
-            </div>
-            
-            <div class="form-group mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+            {{-- Full Name --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Full Name</span>
+                </label>
+                <input type="text"
+                       name="name"
+                       class="input input-bordered w-full"
+                       value="{{ old('name', $user->name) }}"
+                       required>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Phone</label>
-                <input type="text" name="phone" class="form-control" value="{{ old('phone', $user->phone) }}">
+            {{-- Email --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Email</span>
+                </label>
+                <input type="email"
+                       name="email"
+                       class="input input-bordered w-full"
+                       value="{{ old('email', $user->email) }}"
+                       required>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Role</label>
-                <select name="role" class="form-select">
-                    <option value="employee" {{ old('role', $user->role) == 'employee' ? 'selected' : '' }}>Employee</option>
-                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
+            {{-- Phone --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Phone</span>
+                </label>
+                <input type="text"
+                       name="phone"
+                       class="input input-bordered w-full"
+                       value="{{ old('phone', $user->phone) }}">
+            </div>
+
+            {{-- Role --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Role</span>
+                </label>
+                <select name="role" class="select select-bordered w-full">
+                    <option value="employee" {{ old('role', $user->role) == 'employee' ? 'selected' : '' }}>
+                        Employee
+                    </option>
+                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
+                        Admin
+                    </option>
                 </select>
             </div>
-            
-            <div class="form-group mb-3">
-                <label class="form-label">Password (Leave blank to keep current)</label>
-                <input type="password" name="password" class="form-control">
+
+            {{-- Password --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Password (Leave blank to keep current)</span>
+                </label>
+                <input type="password"
+                       name="password"
+                       class="input input-bordered w-full">
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Confirm Password</label>
-                <input type="password" name="password_confirmation" class="form-control">
+            {{-- Confirm Password --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Confirm Password</span>
+                </label>
+                <input type="password"
+                       name="password_confirmation"
+                       class="input input-bordered w-full">
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Address</label>
-                <textarea name="address" class="form-control" rows="3">{{ old('address', $user->address) }}</textarea>
+            {{-- Address --}}
+            <div class="md:col-span-2">
+                <label class="label">
+                    <span class="label-text">Address</span>
+                </label>
+                <textarea name="address"
+                          rows="3"
+                          class="textarea textarea-bordered w-full">{{ old('address', $user->address) }}</textarea>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Status</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active', $user->is_active) ? 'checked' : '' }}>
-                    <label class="form-check-label">Active Account</label>
-                </div>
+            {{-- Status --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Status</span>
+                </label>
+                <input type="checkbox"
+                       name="is_active"
+                       value="1"
+                       class="toggle toggle-primary"
+                       {{ old('is_active', $user->is_active) ? 'checked' : '' }}>
+                <span class="ml-2">Active Account</span>
             </div>
 
-            <div class="form-group mb-3">
-                <label class="form-label">Avatar</label>
+            {{-- Avatar --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Avatar</span>
+                </label>
+
                 @if($user->avatar)
-                    <div class="mb-2">
-                        <img src="{{ asset('storage/'.$user->avatar) }}" alt="Current Avatar" class="img-thumbnail" style="height: 100px;">
+                    <div class="mb-3">
+                        <img src="{{ asset('storage/'.$user->avatar) }}"
+                             alt="Current Avatar"
+                             class="w-24 h-24 object-cover rounded-lg shadow">
                     </div>
                 @endif
-                <input type="file" name="avatar" class="form-control">
+
+                <input type="file"
+                       name="avatar"
+                       class="file-input file-input-bordered w-full">
             </div>
+
         </div>
 
-        <div class="mt-4 text-end">
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Update User</button>
+        <div class="mt-8 text-right">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i> Update User
+            </button>
         </div>
+
     </form>
 </div>
 @endsection

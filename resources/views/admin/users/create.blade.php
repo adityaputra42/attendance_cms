@@ -3,61 +3,153 @@
 @section('title', 'Add Employee')
 
 @section('content')
-<div class="card">
-    <div class="flex justify-between items-center mb-4">
-        <h3>Create New Employee</h3>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-neutral"><i class="fa-solid fa-arrow-left"></i> Back</a>
+<div class="bg-base-100 p-6 rounded-xl shadow">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold">
+            Create New Employee
+        </h2>
+
+        <a href="{{ route('admin.users.index') }}" class="btn btn-neutral btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </a>
     </div>
 
-    <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.users.store') }}"
+          method="POST"
+          enctype="multipart/form-data">
         @csrf
-        <div class="grid grid-cols-2 gap-4">
-            <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+            {{-- Full Name --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Full Name</span>
+                </label>
+                <input type="text"
+                       name="name"
+                       value="{{ old('name') }}"
+                       class="input input-bordered w-full @error('name') input-error @enderror"
+                       required>
+
+                @error('name')
+                    <span class="text-error text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
+
+            {{-- Email --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Email</span>
+                </label>
+                <input type="email"
+                       name="email"
+                       value="{{ old('email') }}"
+                       class="input input-bordered w-full @error('email') input-error @enderror"
+                       required>
+
+                @error('email')
+                    <span class="text-error text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required>
+
+            {{-- Password --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Password</span>
+                </label>
+                <input type="password"
+                       name="password"
+                       class="input input-bordered w-full @error('password') input-error @enderror"
+                       required>
+
+                @error('password')
+                    <span class="text-error text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <div class="form-group">
-                <label class="form-label">Password Confirmation</label>
-                <input type="password" name="password_confirmation" class="form-control" required>
+
+            {{-- Confirm Password --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Password Confirmation</span>
+                </label>
+                <input type="password"
+                       name="password_confirmation"
+                       class="input input-bordered w-full"
+                       required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Phone Number</label>
-                <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+
+            {{-- Phone --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Phone Number</span>
+                </label>
+                <input type="text"
+                       name="phone"
+                       value="{{ old('phone') }}"
+                       class="input input-bordered w-full">
             </div>
-            <div class="form-group">
-                <label class="form-label">Role</label>
-                <select name="role" class="form-control">
-                    <option value="employee" {{ old('role') == 'employee' ? 'selected' : '' }}>Employee</option>
-                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+
+            {{-- Role --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Role</span>
+                </label>
+                <select name="role"
+                        class="select select-bordered w-full">
+                    <option value="employee"
+                        {{ old('role') == 'employee' ? 'selected' : '' }}>
+                        Employee
+                    </option>
+                    <option value="admin"
+                        {{ old('role') == 'admin' ? 'selected' : '' }}>
+                        Admin
+                    </option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="form-label">Profile Picture (Optional)</label>
-                <input type="file" name="avatar" class="form-control">
+
+            {{-- Avatar --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Profile Picture (Optional)</span>
+                </label>
+                <input type="file"
+                       name="avatar"
+                       class="file-input file-input-bordered w-full">
             </div>
-            <div class="form-group">
-                <label class="form-label">Address</label>
-                <textarea name="address" class="form-control" rows="3">{{ old('address') }}</textarea>
+
+            {{-- Address --}}
+            <div>
+                <label class="label">
+                    <span class="label-text">Address</span>
+                </label>
+                <textarea name="address"
+                          rows="3"
+                          class="textarea textarea-bordered w-full">{{ old('address') }}</textarea>
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    <input type="checkbox" name="is_active" {{ old('is_active', true) ? 'checked' : '' }}>
-                    Active
+
+            {{-- Status --}}
+            <div class="md:col-span-2">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox"
+                           name="is_active"
+                           value="1"
+                           class="toggle toggle-primary"
+                           {{ old('is_active', true) ? 'checked' : '' }}>
+                    <span class="label-text">Active Account</span>
                 </label>
             </div>
+
         </div>
 
-        <div class="text-right mt-4">
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Employee</button>
+        <div class="mt-8 text-right">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i> Save Employee
+            </button>
         </div>
+
     </form>
 </div>
 @endsection

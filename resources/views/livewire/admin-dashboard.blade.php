@@ -12,52 +12,63 @@ new class extends Component
     public $todayAttendances;
     public $todayCheckedIn;
     public $todayCheckedOut;
-    public $recentAttendances;
-    public $monthlyStats;
+    public $recentAttendances = [];
+    public $monthlyStats = [];
 
     public function mount()
     {
         $this->loadStats();
     }
 
+    public function render()
+    {
+        return view('livewire.admin-dashboard')
+            ->layout('layouts.admin');
+    }
+
     public function loadStats()
     {
         $this->totalEmployees = User::where('role', 'employee')->count();
-        $this->activeEmployees = User::where('role', 'employee')->where('is_active', true)->count();
+
+        $this->activeEmployees = User::where('role', 'employee')
+            ->where('is_active', true)
+            ->count();
 
         $this->todayAttendances = Attendance::whereDate('attendance_date', today())->count();
+
         $this->todayCheckedIn = Attendance::whereDate('attendance_date', today())
             ->where('status', 'checked_in')
             ->count();
+
         $this->todayCheckedOut = Attendance::whereDate('attendance_date', today())
             ->where('status', 'checked_out')
             ->count();
 
-        // Get recent attendances
         $this->recentAttendances = Attendance::with('user')
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->limit(10)
             ->get();
 
-        // Monthly statistics
         $this->monthlyStats = [];
+
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $count = Attendance::whereYear('attendance_date', $date->year)
-                ->whereMonth('attendance_date', $date->month)
-                ->count();
 
             $this->monthlyStats[] = [
                 'month' => $date->format('M Y'),
-                'count' => $count
+                'count' => Attendance::whereYear('attendance_date', $date->year)
+                    ->whereMonth('attendance_date', $date->month)
+                    ->count(),
             ];
         }
     }
-}; ?>
+};
+?>
+
 
 <div wire:poll.30s="loadStats" class="font-sans p-6">
     <!-- Header Section -->
-    <div class="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
             <p class="text-gray-500 mt-1 text-sm">Overview of your employee attendance.</p>
@@ -77,7 +88,7 @@ new class extends Component
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Employees -->
-        <div class="bg-white rounded-2xl shadow border border-gray-100 group">
+         <div class="bg-white rounded-2xl shadow border border-gray-100 group">
        <div class="m-6 space-y-4">
         <div class="flex justify-between items-start mb-4">
             <div class="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
@@ -166,7 +177,7 @@ new class extends Component
                      <p class="text-indigo-200 text-sm font-medium mb-1">Generate Report</p>
                     <h3 class="text-2xl font-bold text-white leading-tight">Monthly Attendance Analysis</h3>
                 </div>
-                 <button onclick="window.location='{{ route('admin.attendances.report') }}'" class="mt-4 w-full bg-white text-indigo-700 py-2.5 px-4 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-colors shadow-sm">
+                 <button onclick="window.location='{{ route('admin.attendances.report') }}'" class="mt-4 w-full bg-white text-indigo-700 py-3 px-4 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-colors shadow-sm">
                     View Reports
                 </button>
             </div>
@@ -176,7 +187,7 @@ new class extends Component
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Recent Activity Table -->
         <div class="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <div class="p-12 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                 <div>
                     <h3 class="font-bold text-gray-900 text-lg">Live Activity</h3>
                     <p class="text-sm text-gray-500">Real-time attendance monitoring</p>

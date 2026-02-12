@@ -3,83 +3,159 @@
 @section('title', 'Employees')
 
 @section('content')
-<div class="card">
-    <div class="flex justify-between items-center mb-4">
-        <h3>Employee List</h3>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add New Employee
+<div class="bg-white shadow rounded-xl p-6">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">
+            Employee List
+        </h2>
+
+        <a href="{{ route('admin.users.create') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow">
+            <i class="fa-solid fa-plus mr-2"></i>
+            Add New Employee
         </a>
     </div>
 
-    <!-- Search/Filter -->
-    <div class="mb-4">
-        <form action="{{ route('admin.users.index') }}" method="GET" class="flex gap-2">
-            <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="{{ request('search') }}">
-            <select name="status" class="form-select" style="width: 150px;">
-                <option value="all">Status</option>
-                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+    <!-- Search & Filter -->
+    <div class="mb-6">
+        <form action="{{ route('admin.users.index') }}"
+              method="GET"
+              class="flex flex-col md:flex-row gap-3">
+
+            <input type="text"
+                   name="search"
+                   value="{{ request('search') }}"
+                   placeholder="Search by name or email..."
+                   class="w-full md:w-1/3 rounded-lg border-gray-300 shadow-sm text-sm">
+
+            <select name="status"
+                    class="rounded-lg border-gray-300 text-sm shadow-sm md:w-40">
+                <option value="all">All Status</option>
+                <option value="active"
+                    {{ request('status') == 'active' ? 'selected' : '' }}>
+                    Active
+                </option>
+                <option value="inactive"
+                    {{ request('status') == 'inactive' ? 'selected' : '' }}>
+                    Inactive
+                </option>
             </select>
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+
+            <button type="submit"
+                    class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                <i class="fa-solid fa-search"></i>
+            </button>
         </form>
     </div>
 
-    <div class="table-container">
-        <table class="table">
-            <thead>
+    <!-- Table -->
+    <div class="overflow-x-auto border rounded-xl">
+        <table class="min-w-full text-sm text-left">
+
+            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
                 <tr>
-                    <th>Name</th>
-                    <th>Contact</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th class="px-6 py-4">Employee</th>
+                    <th class="px-6 py-4">Contact</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                    <th class="px-6 py-4 text-center">Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 @forelse($users as $user)
-                    <tr>
-                        <td>
-                            <div class="flex items-center gap-2">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random" class="avatar" style="width: 32px; height: 32px;">
+                    <tr class="border-t hover:bg-gray-50 transition">
+
+                        <!-- Employee -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random"
+                                     class="w-9 h-9 rounded-full">
+
                                 <div>
-                                    <div class="font-medium">{{ $user->name }}</div>
-                                    <div class="text-sm text-gray">{{ $user->role }}</div>
+                                    <div class="font-semibold text-gray-800">
+                                        {{ $user->name }}
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        {{ ucfirst($user->role) }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td>
+
+                        <!-- Contact -->
+                        <td class="px-6 py-4 text-sm text-gray-700">
                             <div>{{ $user->email }}</div>
-                            <div class="text-sm text-gray">{{ $user->phone }}</div>
+                            <div class="text-xs text-gray-500">
+                                {{ $user->phone ?? '-' }}
+                            </div>
                         </td>
-                        <td>
-                            <span class="status-badge {{ $user->is_active ? 'status-success' : 'status-danger' }}">
+
+                        <!-- Status -->
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                {{ $user->is_active
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-red-100 text-red-700' }}">
                                 {{ $user->is_active ? 'Active' : 'Inactive' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="flex gap-2">
-                                <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-neutral"><i class="fa-solid fa-eye"></i></a>
-                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-neutral"><i class="fa-solid fa-pencil"></i></a>
-                                
-                                <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST" style="display:inline;">
+
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center gap-2">
+
+                                <a href="{{ route('admin.users.show', $user) }}"
+                                   class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md text-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+
+                                <a href="{{ route('admin.users.edit', $user) }}"
+                                   class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md text-sm">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+
+                                <form action="{{ route('admin.users.toggle-status', $user) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Are you sure?')">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-neutral {{ $user->is_active ? 'text-danger' : 'text-success' }}" onclick="return confirm('Are you sure?')">
-                                        <i class="fa-solid {{ $user->is_active ? 'fa-ban' : 'fa-check' }}"></i>
+
+                                    <button type="submit"
+                                            class="px-3 py-1 rounded-md text-sm
+                                            {{ $user->is_active
+                                                ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                                : 'bg-green-100 text-green-600 hover:bg-green-200' }}">
+                                        <i class="fa-solid
+                                            {{ $user->is_active
+                                                ? 'fa-ban'
+                                                : 'fa-check' }}">
+                                        </i>
                                     </button>
                                 </form>
+
                             </div>
                         </td>
+
                     </tr>
+
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center py-4">No employees found.</td>
+                        <td colspan="4"
+                            class="px-6 py-8 text-center text-gray-500">
+                            No employees found.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
+
         </table>
     </div>
 
-    <div class="mt-4">
-        {{ $users->links() }}
+    <!-- Pagination -->
+    <div class="mt-6">
+        {{ $users->withQueryString()->links() }}
     </div>
+
 </div>
 @endsection
